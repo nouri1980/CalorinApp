@@ -2,86 +2,389 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>CalorinApp</title>
+<meta name="apple-mobile-web-app-title" content="Calorin">
+<meta name="theme-color" content="#16a34a">
+<title>Calorin – Kalorien</title>
 <style>
-body{font-family:-apple-system,sans-serif;margin:0;background:#f4f6f8;color:#222}
-header{background:#2e7d32;color:#fff;padding:16px;text-align:center;font-size:22px;font-weight:bold}
-.card{background:#fff;margin:12px;padding:14px;border-radius:14px;box-shadow:0 1px 4px #0002}
-input,select,button{font-size:16px;padding:10px;margin:4px 0;width:100%;box-sizing:border-box;border-radius:8px;border:1px solid #ccc}
-button{background:#2e7d32;color:#fff;border:none}
-.bar{height:16px;background:#ddd;border-radius:8px;overflow:hidden}
-.fill{height:100%;background:#43a047}
-li{margin:6px 0}
-.del{background:#c62828;width:auto;padding:4px 10px;margin-left:8px}
+:root{--bg:#f2f2f7;--card:#fff;--txt:#111;--sub:#6b7280;--line:#e5e7eb;--gr:#16a34a;--p:#2563eb;--kh:#f59e0b;--f:#db2777;--red:#dc2626}
+@media(prefers-color-scheme:dark){:root{--bg:#000;--card:#1c1c1e;--txt:#f5f5f5;--sub:#9ca3af;--line:#2c2c2e}}
+*{box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--txt);padding:env(safe-area-inset-top) 0 calc(80px + env(safe-area-inset-bottom))}
+header{padding:14px 16px 4px;display:flex;align-items:center;justify-content:space-between}
+header h1{font-size:24px;margin:0}
+.dnav{display:flex;align-items:center;gap:6px;font-size:14px;color:var(--sub)}
+.dnav button{background:var(--card);border:0;border-radius:10px;width:34px;height:34px;font-size:18px;color:var(--txt)}
+main{padding:0 12px}
+.card{background:var(--card);border-radius:16px;padding:14px;margin:10px 0}
+h2{font-size:17px;margin:0 0 8px}
+small,.sub{color:var(--sub);font-size:13px}
+input,select{width:100%;padding:12px;border:1px solid var(--line);border-radius:12px;font-size:16px;background:var(--bg);color:var(--txt);margin:4px 0}
+button{font-size:16px;cursor:pointer}
+.btn{width:100%;padding:13px;border:0;border-radius:12px;background:var(--gr);color:#fff;font-weight:600;margin-top:8px}
+.btn2{padding:8px 12px;border:0;border-radius:10px;background:var(--bg);color:var(--txt);font-size:14px}
+.row{display:flex;gap:8px;align-items:center}
+.row>*{flex:1}
+.ring{display:flex;align-items:center;gap:16px}
+.ring svg{flex:0 0 130px}
+.big{font-size:28px;font-weight:700}
+.bar{height:8px;background:var(--line);border-radius:5px;overflow:hidden;margin:3px 0 8px}
+.bar i{display:block;height:100%;border-radius:5px}
+.item{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-top:1px solid var(--line);gap:8px}
+.item:first-of-type{border-top:0}
+.del{background:none;border:0;color:var(--red);font-size:20px;padding:0 4px}
+.sug{padding:11px 4px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:8px}
+.sug b{font-weight:600}
+.macros{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;text-align:center;margin:10px 0}
+.macros div{background:var(--bg);border-radius:12px;padding:8px 2px}
+.macros b{display:block;font-size:18px}
+nav{position:fixed;left:0;right:0;bottom:0;background:var(--card);display:flex;border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
+nav button{flex:1;background:none;border:0;padding:8px 0 10px;font-size:11px;color:var(--sub)}
+nav button span{display:block;font-size:22px}
+nav button.a{color:var(--gr);font-weight:600}
+.glass{display:flex;gap:4px;flex-wrap:wrap;margin:6px 0}
+.glass span{font-size:24px;opacity:.25}.glass span.on{opacity:1}
+.chk{display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px solid var(--line)}
+.chk input{width:22px;height:22px;margin:0}
+.done{text-decoration:line-through;color:var(--sub)}
+.days{display:flex;align-items:flex-end;gap:6px;height:130px;margin-top:8px}
+.days div{flex:1;text-align:center;font-size:11px;color:var(--sub)}
+.days i{display:block;border-radius:6px 6px 0 0;margin-bottom:4px}
+details summary{color:var(--gr);font-weight:600;margin-top:6px}
+.warn{color:var(--red);font-weight:600}
 </style>
 </head>
 <body>
-<header>CalorinApp 🥗 Halal</header>
-
-<div class="card">
-<b>Mein Tagesziel (kcal)</b>
-<input id="ziel" type="number" placeholder="z. B. 2000">
-<button onclick="zielSpeichern()">Ziel speichern</button>
-<p id="stand"></p>
-<div class="bar"><div class="fill" id="fill" style="width:0%"></div></div>
-<p id="makros"></p>
-</div>
-
-<div class="card">
-<b>Essen eintragen</b>
-<input id="name" placeholder="Was hast du gegessen?">
-<input id="kcal" type="number" placeholder="Kalorien">
-<input id="eiweiss" type="number" placeholder="Eiweiß (g)">
-<input id="kh" type="number" placeholder="Kohlenhydrate (g)">
-<input id="fett" type="number" placeholder="Fett (g)">
-<button onclick="eintragen()">Hinzufügen</button>
-<ul id="liste"></ul>
-</div>
-
-<div class="card">
-<b>Halal-Rezeptvorschlag</b>
-<button onclick="vorschlag()">Gericht vorschlagen</button>
-<div id="rezept"></div>
-</div>
-
+<header><h1 id="titel">Heute</h1><div class="dnav" id="dnav"></div></header>
+<main id="v"></main>
+<nav>
+<button data-t="heute"><span>🏠</span>Heute</button>
+<button data-t="add"><span>➕</span>Essen</button>
+<button data-t="rezepte"><span>🍲</span>Rezepte</button>
+<button data-t="einkauf"><span>🛒</span>Einkauf</button>
+<button data-t="mehr"><span>⚙️</span>Mehr</button>
+</nav>
 <script>
-const rezepte=[
-{n:"Hähnchen mit Reis und Gemüse",k:550,z:["200 g Hähnchenbrust (halal)","80 g Reis","1 Paprika","1 Zucchini","1 EL Olivenöl"]},
-{n:"Linsensuppe",k:400,z:["120 g rote Linsen","1 Zwiebel","1 Karotte","Kreuzkümmel","1 l Gemüsebrühe"]},
-{n:"Rinderhack-Pfanne (halal)",k:600,z:["150 g Rinderhack (halal)","1 Zwiebel","200 g Kartoffeln","1 Tomate","Gewürze"]},
-{n:"Omelett mit Spinat",k:350,z:["3 Eier","100 g Spinat","30 g Feta","1 TL Butter"]},
-{n:"Lachs mit Süßkartoffel",k:520,z:["150 g Lachs","250 g Süßkartoffel","Brokkoli","Zitrone"]},
-{n:"Joghurt mit Obst und Haferflocken",k:300,z:["200 g Naturjoghurt","40 g Haferflocken","1 Banane","Honig"]}
+/* Lebensmittel-Liste: [Name, kcal, Eiweiß, Kohlenhydrate, Fett (alles pro 100 g), Portion in g, Portionsname, Suchwörter]
+   Durchschnittswerte, alles Halal (kein Schwein, kein Alkohol). */
+const FOODS=[
+// Gerichte & Fast Food
+["Pizza Margherita",250,10,31,9,350,"1 Pizza","pizza kaese"],
+["Pizza Salami (Rind, halal)",270,11,29,12,350,"1 Pizza","pizza sucuk"],
+["Pizza Thunfisch",240,12,28,9,350,"1 Pizza","pizza tonno"],
+["Pizza Hähnchen",245,12,29,9,350,"1 Pizza","pizza chicken"],
+["Pizza Gemüse",220,9,30,7,350,"1 Pizza","pizza vegetarisch funghi"],
+["Pizzastück",255,10,30,10,110,"1 Stück","pizza slice"],
+["Döner Kebab im Brot",215,11,22,9,400,"1 Döner","doener kebap doner"],
+["Dürüm Döner",210,11,22,8,400,"1 Dürüm","durum duerum wrap doener"],
+["Dönerteller mit Pommes",190,10,17,9,550,"1 Teller","doener teller kebab"],
+["Döner-Box mit Pommes",220,11,18,12,400,"1 Box","doener box kebab"],
+["Lahmacun",190,9,26,5,200,"1 Lahmacun","tuerkische pizza"],
+["Pide mit Käse",250,11,32,8,300,"1 Pide","pide kaese"],
+["Falafel",333,13,32,18,30,"1 Bällchen","falafel"],
+["Shawarma-Wrap Hähnchen",220,12,22,9,350,"1 Wrap","schawarma wrap"],
+["Wrap mit Hähnchen",200,11,22,7,250,"1 Wrap","wrap chicken"],
+["Burger (Rind)",250,13,24,11,220,"1 Burger","hamburger burger"],
+["Cheeseburger",255,13,26,11,120,"1 Burger","burger kaese"],
+["Chicken Burger",240,12,25,10,200,"1 Burger","burger haehnchen"],
+["Pommes frites",300,3.5,38,15,150,"1 Portion","pommes fritten chips fries"],
+["Chicken Nuggets",280,15,17,17,17,"1 Stück","nuggets haehnchen"],
+["Spaghetti Bolognese (Rind)",135,7,16,4.5,400,"1 Teller","nudeln pasta bolognese"],
+["Nudeln mit Tomatensoße",120,4,22,2,400,"1 Teller","pasta spaghetti tomate"],
+["Lasagne (Rind)",150,8,13,7,350,"1 Portion","lasagne"],
+["Chili con Carne (Rind)",110,8,9,4.5,400,"1 Teller","chili"],
+["Hähnchen-Curry mit Reis",140,8,17,4.5,450,"1 Teller","curry haehnchen reis"],
+["Butter Chicken",150,11,6,9,300,"1 Portion","curry chicken"],
+["Hähnchen mit Reis und Gemüse",125,11,14,2.5,450,"1 Teller","haehnchen reis gemuese"],
+["Gebratene Nudeln mit Hähnchen",150,7,19,5,400,"1 Portion","asia nudeln"],
+["Gebratener Reis mit Ei",165,6,23,5.5,400,"1 Portion","asia reis fried rice"],
+["Börek mit Käse",290,9,27,16,150,"1 Stück","boerek borek"],
+["Menemen",100,5,4,7,250,"1 Portion","eier tomaten"],
+["Linsensuppe (Mercimek)",70,4,10,1.5,350,"1 Teller","suppe linsen mercimek"],
+["Hühnersuppe",40,4,3,1.5,350,"1 Teller","suppe huhn"],
+["Omelett",155,11,1,12,150,"1 Omelett","omelette eier"],
+["Rührei",170,11,1.5,13,120,"1 Portion","eier ruehrei"],
+["Käsetoast",260,12,27,11,120,"1 Toast","toast sandwich"],
+["Pfannkuchen",225,7,26,10,80,"1 Stück","pancake crepe"],
+["Waffel",310,6,38,15,70,"1 Waffel","waffel"],
+["Porridge mit Milch",115,5,14,4,300,"1 Schale","haferbrei oatmeal"],
+["Pilav (Butterreis)",160,3,30,3.5,200,"1 Portion","reis pilaw"],
+// Fleisch, Fisch, Eier
+["Hähnchenbrust gebraten",165,31,0,3.6,150,"1 Stück","haehnchen huhn chicken"],
+["Hähnchenschenkel",215,24,0,13,150,"1 Stück","haehnchen keule"],
+["Hähnchenschnitzel paniert",220,22,10,10,150,"1 Schnitzel","schnitzel"],
+["Hähnchenspieß (Şiş)",170,26,2,7,150,"1 Spieß","sis spiess"],
+["Rinderhack gebraten",250,26,0,16,125,"1 Portion","hackfleisch hack"],
+["Rindersteak",190,29,0,8,200,"1 Steak","steak rind"],
+["Lammkotelett",280,25,0,20,150,"1 Portion","lamm"],
+["Köfte",250,17,5,18,150,"3 Stück","koefte frikadelle kofte"],
+["Sucuk (Rind)",390,18,1,35,50,"1 Portion","sucuk wurst"],
+["Putenbrust-Aufschnitt",105,20,1,2,20,"1 Scheibe","pute aufschnitt"],
+["Lachs gebraten",205,22,0,13,150,"1 Filet","lachs fisch"],
+["Thunfisch (Dose, in Wasser)",110,25,0,1,130,"1 Dose","thunfisch fisch"],
+["Fischstäbchen",200,13,16,9,30,"1 Stück","fisch"],
+["Ei (gekocht)",155,13,1.1,11,60,"1 Ei","ei eier"],
+["Spiegelei",196,14,0.8,15,60,"1 Ei","ei eier"],
+// Beilagen & Brot
+["Reis gekocht",130,2.7,28,0.3,200,"1 Portion","reis basmati"],
+["Nudeln gekocht",150,5.5,30,0.9,250,"1 Portion","pasta spaghetti"],
+["Kartoffeln gekocht",72,2,15,0.1,200,"1 Portion","kartoffel"],
+["Bratkartoffeln",160,2.6,20,7.5,200,"1 Portion","kartoffel"],
+["Kartoffelpüree",90,2,13,3.5,200,"1 Portion","pueree kartoffel"],
+["Bulgur gekocht",83,3,19,0.2,200,"1 Portion","bulgur"],
+["Couscous gekocht",112,3.8,23,0.2,200,"1 Portion","couscous"],
+["Brötchen",270,9,52,1.8,55,"1 Brötchen","broetchen semmel"],
+["Vollkornbrot",220,8,41,1.6,50,"1 Scheibe","brot"],
+["Toastbrot",260,8,48,3.5,25,"1 Scheibe","toast brot"],
+["Fladenbrot",260,9,52,1.5,100,"1 Stück","brot pide"],
+["Simit",330,10,60,6,120,"1 Simit","sesamring"],
+["Croissant",406,8,46,21,60,"1 Croissant","croissant"],
+["Haferflocken",370,13.5,59,7,50,"1 Portion","hafer"],
+["Müsli",370,10,62,7,60,"1 Portion","muesli"],
+["Cornflakes",375,7,84,0.9,30,"1 Portion","flakes"],
+["Rote Linsen (trocken)",330,24,50,1.6,70,"1 Portion","linsen"],
+["Linsen gekocht",116,9,17,0.4,150,"1 Portion","linsen"],
+["Kichererbsen gekocht",164,9,19,2.6,150,"1 Portion","kichererbsen"],
+["Hummus",175,8,14,10,50,"1 Portion","humus"],
+// Milchprodukte
+["Milch 3,5 %",64,3.3,4.8,3.5,200,"1 Glas","milch"],
+["Milch 1,5 %",47,3.4,4.9,1.5,200,"1 Glas","milch"],
+["Joghurt natur 3,5 %",64,3.8,4.6,3.5,150,"1 Becher","joghurt"],
+["Griechischer Joghurt 10 %",120,5,4,10,150,"1 Becher","joghurt"],
+["Magerquark",67,12,4,0.2,250,"1 Packung","quark"],
+["Skyr",63,11,4,0.2,150,"1 Becher","skyr"],
+["Gouda",356,25,0,28,30,"1 Scheibe","kaese"],
+["Feta / Schafskäse",264,14,4,21,50,"1 Portion","kaese hirtenkaese"],
+["Mozzarella",250,18,1,19,125,"1 Kugel","kaese"],
+["Frischkäse",250,5.5,3,24,30,"1 Portion","kaese"],
+["Butter",741,0.7,0.6,83,10,"1 Portion","butter"],
+// Obst & Gemüse
+["Apfel",52,0.3,12,0.2,180,"1 Apfel","obst"],
+["Banane",89,1.1,20,0.3,120,"1 Banane","obst"],
+["Orange",47,1,9,0.2,150,"1 Orange","obst apfelsine"],
+["Mandarine",53,0.8,10,0.3,70,"1 Mandarine","obst"],
+["Birne",57,0.4,12,0.1,170,"1 Birne","obst"],
+["Erdbeeren",32,0.7,6,0.3,150,"1 Schale","obst"],
+["Weintrauben",69,0.7,16,0.2,150,"1 Portion","obst trauben"],
+["Wassermelone",30,0.6,7,0.2,300,"1 Stück","obst melone"],
+["Mango",60,0.8,13,0.4,200,"1/2 Mango","obst"],
+["Kiwi",61,1.1,11,0.5,75,"1 Kiwi","obst"],
+["Datteln",282,2.5,65,0.4,10,"1 Dattel","dattel"],
+["Tomate",18,0.9,3,0.2,120,"1 Tomate","gemuese"],
+["Gurke",15,0.6,2.5,0.1,200,"1/2 Gurke","gemuese"],
+["Paprika",31,1,5,0.3,150,"1 Paprika","gemuese"],
+["Brokkoli",34,2.8,4,0.4,150,"1 Portion","gemuese"],
+["Karotte",41,0.9,7,0.2,80,"1 Karotte","gemuese moehre"],
+["Spinat",23,2.9,1.5,0.4,150,"1 Portion","gemuese"],
+["Zwiebel",40,1.1,8,0.1,80,"1 Zwiebel","gemuese"],
+["Avocado",160,2,2,15,140,"1 Avocado","avocado"],
+["Mais (Dose)",80,2.5,15,1.2,150,"1 Portion","mais"],
+["Salat ohne Dressing",20,1.2,3,0.2,150,"1 Schale","salat"],
+["Salat mit Dressing",80,1.3,4,6.5,200,"1 Schale","salat"],
+// Nüsse, Aufstriche, Öl
+["Mandeln",580,21,7,50,30,"1 Handvoll","nuesse"],
+["Walnüsse",654,15,7,65,30,"1 Handvoll","nuesse"],
+["Erdnüsse geröstet",585,25,10,49,30,"1 Handvoll","nuesse"],
+["Pistazien",570,20,15,46,30,"1 Handvoll","nuesse"],
+["Erdnussbutter",590,25,14,50,15,"1 EL","aufstrich"],
+["Olivenöl",884,0,0,100,10,"1 EL","oel"],
+["Honig",300,0.3,80,0,20,"1 EL","honig"],
+["Nuss-Nougat-Creme",539,6.3,57.5,31,20,"1 Portion","nutella aufstrich"],
+["Marmelade",250,0.4,60,0.1,20,"1 Portion","konfituere aufstrich"],
+["Zucker",400,0,100,0,5,"1 TL","zucker"],
+// Süßes & Snacks
+["Vollmilchschokolade",535,7,58,30,25,"4 Stücke","schokolade"],
+["Fruchtgummi (Halal)",343,6.9,77,0.1,25,"1 Portion","gummibaerchen haribo"],
+["Kekse",480,6,67,20,10,"1 Keks","keks"],
+["Rührkuchen",400,6,50,19,70,"1 Stück","kuchen"],
+["Speiseeis Vanille",207,3.5,24,11,60,"1 Kugel","eis"],
+["Baklava",430,6,52,22,40,"1 Stück","baklava"],
+["Chips",540,6,50,34,30,"1 Handvoll","chips"],
+// Getränke (100 ml ≈ 100 g)
+["Cola",42,0,10.6,0,330,"1 Dose","cola getraenk"],
+["Cola Zero",0.3,0,0,0,330,"1 Dose","cola zero light"],
+["Orangensaft",45,0.7,10,0.2,250,"1 Glas","saft"],
+["Apfelschorle",24,0,5.5,0,330,"1 Glas","schorle"],
+["Ayran",37,1.7,2.5,1.8,250,"1 Becher","ayran"],
+["Kaffee schwarz",2,0.1,0,0,200,"1 Tasse","kaffee"],
+["Milchkaffee / Latte",45,2.4,3.6,2.3,300,"1 Becher","kaffee latte cappuccino"],
+["Tee mit Zucker",16,0,4,0,250,"1 Glas","tee cay"],
+["Eistee",28,0,7,0,330,"1 Glas","eistee"],
+["Energy Drink",45,0,11,0,250,"1 Dose","red bull"],
+["Smoothie",55,0.6,12,0.2,250,"1 Flasche","smoothie"],
+["Proteinshake mit Milch",95,10,6,3.2,330,"1 Shake","protein eiweiss shake"]
 ];
-const heute=new Date().toISOString().slice(0,10);
-let daten=JSON.parse(localStorage.getItem("calorin")||"{}");
-if(daten.tag!==heute){daten.tag=heute;daten.essen=[];}
-daten.ziel=daten.ziel||2000;
-function speichern(){localStorage.setItem("calorin",JSON.stringify(daten));anzeigen();}
-function zielSpeichern(){const z=+document.getElementById("ziel").value;if(z>0){daten.ziel=z;speichern();}}
+
+const REZ=[
+{n:"Hähnchen-Reis-Bowl",z:[["Hähnchenbrust gebraten",150],["Reis gekocht",200],["Brokkoli",150],["Olivenöl",10]],s:"Reis kochen. Hähnchen würzen (Salz, Pfeffer, Paprika) und in Olivenöl braten. Brokkoli 5 Minuten dämpfen. Alles in eine Schale geben."},
+{n:"Linsensuppe (Mercimek)",z:[["Rote Linsen (trocken)",70],["Zwiebel",80],["Karotte",80],["Olivenöl",10]],s:"Zwiebel und Karotte klein schneiden und im Öl anbraten. Linsen und 500 ml Wasser dazu, 20 Minuten kochen. Mit Kreuzkümmel, Salz und Pul Biber würzen und pürieren."},
+{n:"Menemen mit Brot",z:[["Ei (gekocht)",120],["Tomate",200],["Paprika",100],["Olivenöl",10],["Fladenbrot",60]],s:"Paprika in Öl anbraten, Tomaten dazu und einkochen. 2 Eier unterrühren, bis sie stocken. Mit Brot servieren."},
+{n:"Lachs mit Kartoffeln und Spinat",z:[["Lachs gebraten",150],["Kartoffeln gekocht",250],["Spinat",150],["Olivenöl",5]],s:"Kartoffeln kochen. Lachs in der Pfanne von jeder Seite 3–4 Minuten braten. Spinat kurz in Öl mit Knoblauch anschwitzen."},
+{n:"Overnight Oats mit Banane",z:[["Haferflocken",50],["Skyr",150],["Milch 1,5 %",100],["Banane",120],["Honig",10]],s:"Haferflocken, Skyr und Milch verrühren, über Nacht in den Kühlschrank stellen. Morgens Banane und Honig darauf."},
+{n:"Köfte mit Bulgur und Salat",z:[["Köfte",150],["Bulgur gekocht",200],["Salat ohne Dressing",150],["Joghurt natur 3,5 %",100]],s:"Köfte braten oder grillen. Bulgur mit Brühe garen. Salat schneiden, Joghurt mit Knoblauch und Minze verrühren."}
+];
+
+const MZ=["Frühstück","Mittagessen","Abendessen","Snacks"];
+const KEY="calorin_v2";
+let S={ziel:{k:2000,p:120,kh:220,f:70,w:8},tage:{},gewicht:[],eigene:[],einkauf:[]};
+try{const x=JSON.parse(localStorage.getItem(KEY));if(x)S=Object.assign(S,x)}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+const iso=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+const heute=()=>iso(new Date());
+let D=heute(),tab="heute",sel=null,addMz=null,letzteSuche="";
+function T(d){d=d||D;return S.tage[d]||(S.tage[d]={e:[],w:0})}
+const r0=x=>Math.round(x),r1=x=>Math.round(x*10)/10;
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function sum(e){return e.reduce((a,x)=>({k:a.k+x.k,p:a.p+x.p,kh:a.kh+x.kh,f:a.f+x.f}),{k:0,p:0,kh:0,f:0})}
+function alle(){return FOODS.concat(S.eigene)}
+function find(n){return alle().find(f=>f[0]===n)}
+function werte(f,g){const x=g/100;return{k:f[1]*x,p:f[2]*x,kh:f[3]*x,f:f[4]*x}}
+function stdMz(){const h=new Date().getHours();return h<11?"Frühstück":h<15?"Mittagessen":h<17?"Snacks":h<22?"Abendessen":"Snacks"}
+function fmtD(d){if(d===heute())return"Heute";return new Date(d+"T12:00").toLocaleDateString("de-DE",{weekday:"short",day:"numeric",month:"short"})}
+
+/* Suche */
+const N=s=>String(s).toLowerCase().replace(/ä/g,"a").replace(/ö/g,"o").replace(/ü/g,"u").replace(/ß/g,"ss").replace(/[ş]/g,"s").replace(/[ç]/g,"c").replace(/[ğ]/g,"g").replace(/[ı]/g,"i").replace(/[^a-z0-9 ]/g," ").replace(/\s+/g," ").trim();
+function stamm(w){return w.length>4?w.replace(/(en|er|e|n|s)$/,""):w}
+function suche(q){
+  const t=N(q).split(" ").filter(Boolean);if(!t.length)return[];
+  const r=[];
+  alle().forEach((f,idx)=>{
+    const n=N(f[0]),h=n+" "+N(f[7]||""),w0=n.split(" ")[0];
+    if(t.every(w=>h.includes(w)||h.includes(stamm(w)))){
+      let sc=0;if(n===t.join(" "))sc+=100;if(n.startsWith(t[0]))sc+=40;if(n.split(" ").includes(t[0]))sc+=20;
+      if(w0.length>1&&t[0].startsWith(w0)&&t[0].length-w0.length<=3)sc+=45;sc-=n.length/20+idx/15;
+      r.push([sc,f]);
+    }
+  });
+  return r.sort((a,b)=>b[0]-a[0]).slice(0,8).map(x=>x[1]);
+}
+function parse(q){
+  const m=q.trim().match(/^(\d+(?:[.,]\d+)?)\s*(g|gr|gramm|ml|x|stk|stück|stueck|portionen|portion|scheiben|scheibe)?\.?\s+(.+)$/i);
+  if(m)return{n:parseFloat(m[1].replace(",",".")),u:/^(g|gr|gramm|ml)$/i.test(m[2]||"")?"g":"p",text:m[3]};
+  return{n:null,u:"p",text:q};
+}
+
+/* Ansichten */
+const V={
+heute(){
+  const t=T(),s=sum(t.e),z=S.ziel,rest=z.k-s.k,pc=Math.min(s.k/z.k,1),C=339.3,over=rest<0;
+  const bar=(l,v,g,c)=>`<div class="row"><span>${l}</span><span style="text-align:right">${r0(v)} / ${g} g</span></div><div class="bar"><i style="width:${Math.min(v/g*100,100)}%;background:${c}"></i></div>`;
+  let h=`<div class="card ring"><svg viewBox="0 0 130 130"><circle cx="65" cy="65" r="54" fill="none" stroke="var(--line)" stroke-width="12"/><circle cx="65" cy="65" r="54" fill="none" stroke="${over?"var(--red)":"var(--gr)"}" stroke-width="12" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C*(1-pc)}" transform="rotate(-90 65 65)"/><text x="65" y="62" text-anchor="middle" font-size="24" font-weight="700" fill="currentColor">${r0(Math.abs(rest))}</text><text x="65" y="82" text-anchor="middle" font-size="11" fill="var(--sub)">${over?"kcal zu viel":"kcal übrig"}</text></svg>
+  <div><div class="sub">Gegessen</div><div class="big">${r0(s.k)}</div><div class="sub">Ziel: ${z.k} kcal</div>${over?'<div class="warn">Ziel überschritten!</div>':""}</div></div>
+  <div class="card">${bar("Eiweiß",s.p,z.p,"var(--p)")}${bar("Kohlenhydrate",s.kh,z.kh,"var(--kh)")}${bar("Fett",s.f,z.f,"var(--f)")}</div>`;
+  MZ.forEach(m=>{
+    const e=t.e.map((x,i)=>[x,i]).filter(([x])=>x.m===m),ss=sum(e.map(a=>a[0]));
+    h+=`<div class="card"><div class="row"><h2>${m}</h2><span style="text-align:right" class="sub">${r0(ss.k)} kcal</span></div>`;
+    e.forEach(([x,i])=>h+=`<div class="item"><div><b>${esc(x.n)}</b><br><small>${esc(x.l)} · E ${r1(x.p)} · KH ${r1(x.kh)} · F ${r1(x.f)}</small></div><div class="row" style="flex:0 0 auto"><span>${r0(x.k)}</span><button class="del" onclick="del(${i})">×</button></div></div>`);
+    h+=`<button class="btn2" style="margin-top:6px" onclick="addMz='${m}';zeig('add')">+ Essen hinzufügen</button></div>`;
+  });
+  let g="";for(let i=0;i<Math.max(z.w,t.w);i++)g+=`<span class="${i<t.w?"on":""}">💧</span>`;
+  h+=`<div class="card"><div class="row"><h2>Wasser</h2><span style="text-align:right" class="sub">${t.w} von ${z.w} Gläsern (je 250 ml)</span></div><div class="glass">${g}</div><div class="row"><button class="btn2" onclick="wasser(-1)">− Glas</button><button class="btn2" onclick="wasser(1)">+ Glas</button></div></div>`;
+  return h;
+},
+add(){
+  const m=addMz||stdMz();
+  let h=`<div class="card"><h2>Was hast du gegessen?</h2>
+  <select id="mz">${MZ.map(x=>`<option${x===m?" selected":""}>${x}</option>`).join("")}</select>
+  <input id="q" placeholder="z. B. Pizza, 2 Eier, 200 g Reis" autocomplete="off" value="${esc(letzteSuche)}" oninput="tippe()">
+  <div id="sug"></div></div><div id="det"></div>`;
+  return h;
+},
+rezepte(){
+  return `<div class="card"><small>Alle Rezepte sind Halal. Werte pro Portion.</small></div>`+REZ.map((r,i)=>{
+    const s=sum(r.z.map(([n,g])=>werte(find(n),g)));
+    return `<div class="card"><h2>${r.n}</h2><div class="macros"><div><b>${r0(s.k)}</b><small>kcal</small></div><div><b>${r0(s.p)}</b><small>Eiweiß</small></div><div><b>${r0(s.kh)}</b><small>KH</small></div><div><b>${r0(s.f)}</b><small>Fett</small></div></div>
+    <small>${r.z.map(([n,g])=>`${n} (${g} g)`).join(" · ")}</small>
+    <details><summary>Zubereitung</summary><p>${r.s}</p></details>
+    <div class="row" style="margin-top:8px"><button class="btn2" onclick="rezEss(${i})">✓ Gegessen</button><button class="btn2" onclick="rezKauf(${i})">🛒 Einkaufsliste</button></div></div>`;
+  }).join("");
+},
+einkauf(){
+  let h=`<div class="card"><h2>Einkaufsliste</h2><div class="row"><input id="ek" placeholder="Artikel hinzufügen"><button class="btn2" style="flex:0 0 auto" onclick="if(ek.value.trim()){S.einkauf.push({n:ek.value.trim(),ok:false});save();zeig('einkauf')}">+</button></div>`;
+  if(!S.einkauf.length)h+=`<p class="sub">Noch leer. Bei den Rezepten auf „Einkaufsliste“ tippen.</p>`;
+  S.einkauf.forEach((x,i)=>h+=`<label class="chk"><input type="checkbox"${x.ok?" checked":""} onchange="S.einkauf[${i}].ok=this.checked;save();zeig('einkauf')"><span class="${x.ok?"done":""}">${esc(x.n)}</span></label>`);
+  if(S.einkauf.some(x=>x.ok))h+=`<button class="btn2" style="margin-top:8px" onclick="S.einkauf=S.einkauf.filter(x=>!x.ok);save();zeig('einkauf')">Erledigte löschen</button>`;
+  return h+"</div>";
+},
+mehr(){
+  const z=S.ziel;let tage=[],max=z.k;
+  for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const k=iso(d),v=S.tage[k]?sum(S.tage[k].e).k:0;tage.push([d,v]);max=Math.max(max,v)}
+  let h=`<div class="card"><h2>Letzte 7 Tage</h2><div class="days">${tage.map(([d,v])=>`<div><small>${r0(v)}</small><i style="height:${v/max*95}px;background:${v>z.k?"var(--red)":"var(--gr)"}"></i>${d.toLocaleDateString("de-DE",{weekday:"short"})}</div>`).join("")}</div></div>`;
+  h+=`<div class="card"><h2>Gewicht</h2><div class="row"><input id="gw" type="number" step="0.1" inputmode="decimal" placeholder="kg"><button class="btn2" style="flex:0 0 auto" onclick="if(+gw.value){S.gewicht.push([heute(),+gw.value]);save();zeig('mehr')}">Speichern</button></div>`;
+  S.gewicht.slice(-5).reverse().forEach(([d,w])=>h+=`<div class="item"><span>${fmtD(d)}</span><b style="text-align:right">${w} kg</b></div>`);
+  h+=`</div><div class="card"><h2>Meine Ziele</h2>
+  <small>Kalorien pro Tag</small><input id="zk" type="number" inputmode="numeric" value="${z.k}">
+  <div class="row"><div><small>Eiweiß g</small><input id="zp" type="number" value="${z.p}"></div><div><small>KH g</small><input id="zh" type="number" value="${z.kh}"></div><div><small>Fett g</small><input id="zf" type="number" value="${z.f}"></div></div>
+  <small>Wasser (Gläser à 250 ml)</small><input id="zw" type="number" value="${z.w}">
+  <button class="btn" onclick="S.ziel={k:+zk.value||2000,p:+zp.value||0,kh:+zh.value||0,f:+zf.value||0,w:+zw.value||8};save();alert('Gespeichert')">Ziele speichern</button></div>`;
+  h+=`<div class="card"><h2>Eigene Lebensmittel</h2><small>Werte von der Verpackung (pro 100 g) eintragen. Sie erscheinen dann bei der Suche.</small>${eigenesForm("")}`;
+  S.eigene.forEach((f,i)=>h+=`<div class="item"><div><b>${esc(f[0])}</b><br><small>${f[1]} kcal / 100 g</small></div><button class="del" onclick="S.eigene.splice(${i},1);save();zeig('mehr')">×</button></div>`);
+  h+=`</div><div class="card"><small>Die Nährwerte sind Durchschnittswerte. Bei Fertigprodukten sind die Angaben auf der Verpackung genauer. Deine Daten bleiben nur auf diesem Gerät.</small></div>`;
+  return h;
+}
+};
+
+function eigenesForm(name){
+  return `<input id="en" placeholder="Name" value="${esc(name)}"><div class="row"><input id="ekc" type="number" inputmode="decimal" placeholder="kcal"><input id="ep" type="number" inputmode="decimal" placeholder="Eiweiß g"></div><div class="row"><input id="eh" type="number" inputmode="decimal" placeholder="KH g"><input id="ef" type="number" inputmode="decimal" placeholder="Fett g"></div><input id="eg" type="number" inputmode="numeric" placeholder="Portion in g (z. B. 100)"><button class="btn" onclick="eigenesSpeichern()">Lebensmittel speichern</button>`;
+}
+function eigenesSpeichern(){
+  const n=en.value.trim();if(!n||ekc.value===""){alert("Bitte mindestens Name und kcal eintragen");return}
+  S.eigene.push([n,+ekc.value,+ep.value||0,+eh.value||0,+ef.value||0,+eg.value||100,"1 Portion",""]);save();
+  if(tab==="add"){letzteSuche=n;zeig("add")}else{alert("Hinzugefügt");zeig("mehr")}
+}
+
+/* Eingabe */
+function tippe(){
+  letzteSuche=q.value;const p=parse(q.value),r=suche(p.text);sel=null;det.innerHTML="";
+  if(!q.value.trim()){sug.innerHTML="";return}
+  if(!r.length){sug.innerHTML=`<p class="sub">„${esc(p.text)}“ ist nicht in der Liste. Leg es mit den Werten von der Verpackung an:</p>${eigenesForm(p.text)}`;return}
+  sug.innerHTML=r.map((f,i)=>`<div class="sug" onclick="waehle(${i})"><div><b>${esc(f[0])}</b><br><small>${esc(f[6])} (${f[5]} g)</small></div><div style="text-align:right"><b>${r0(f[1]*f[5]/100)}</b><br><small>kcal</small></div></div>`).join("");
+  tippe.r=r;tippe.p=p;
+}
+function waehle(i){
+  const f=tippe.r[i],p=tippe.p;sel={f,n:p.n||1,u:p.u};
+  sug.innerHTML="";
+  det.innerHTML=`<div class="card"><h2>${esc(f[0])}</h2><small>Pro 100 g: ${f[1]} kcal · E ${f[2]} g · KH ${f[3]} g · F ${f[4]} g</small>
+  <div class="row" style="margin-top:8px"><input id="anz" type="number" inputmode="decimal" step="any" value="${sel.n}" oninput="rechne()"><select id="ein" onchange="umstellen()"><option value="p"${sel.u==="p"?" selected":""}>× ${esc(f[6])} (${f[5]} g)</option><option value="g"${sel.u==="g"?" selected":""}>Gramm</option></select></div>
+  <div id="erg"></div><button class="btn" onclick="eintragen()">Eintragen</button></div>`;
+  rechne();
+}
+function umstellen(){const a=+anz.value||0;anz.value=ein.value==="g"?r0(a*sel.f[5]):r1(a/sel.f[5]);rechne()}
+function gramm(){const a=+String(anz.value).replace(",",".")||0;return ein.value==="g"?a:a*sel.f[5]}
+function rechne(){
+  const g=gramm(),w=werte(sel.f,g);
+  erg.innerHTML=`<div class="macros"><div><b>${r0(w.k)}</b><small>kcal</small></div><div><b>${r1(w.p)}</b><small>Eiweiß</small></div><div><b>${r1(w.kh)}</b><small>KH</small></div><div><b>${r1(w.f)}</b><small>Fett</small></div></div><small>Menge: ${r0(g)} g</small>`;
+}
 function eintragen(){
-const e={n:document.getElementById("name").value,k:+document.getElementById("kcal").value||0,
-e:+document.getElementById("eiweiss").value||0,c:+document.getElementById("kh").value||0,f:+document.getElementById("fett").value||0};
-if(!e.n)return;daten.essen.push(e);
-["name","kcal","eiweiss","kh","fett"].forEach(i=>document.getElementById(i).value="");speichern();}
-function loeschen(i){daten.essen.splice(i,1);speichern();}
-function anzeigen(){
-let k=0,e=0,c=0,f=0;
-document.getElementById("liste").innerHTML=daten.essen.map((x,i)=>{k+=x.k;e+=x.e;c+=x.c;f+=x.f;
-return `<li>${x.n}: ${x.k} kcal <button class="del" onclick="loeschen(${i})">X</button></li>`}).join("");
-const rest=daten.ziel-k;
-document.getElementById("stand").innerText=`${k} von ${daten.ziel} kcal – noch ${rest} kcal übrig`;
-document.getElementById("fill").style.width=Math.min(100,k/daten.ziel*100)+"%";
-document.getElementById("makros").innerText=`Eiweiß ${e} g · Kohlenhydrate ${c} g · Fett ${f} g`;
-document.getElementById("ziel").placeholder="Aktuell: "+daten.ziel;}
-function vorschlag(){
-let k=0;daten.essen.forEach(x=>k+=x.k);const rest=daten.ziel-k;
-let passend=rezepte.filter(r=>r.k<=rest);if(!passend.length)passend=rezepte;
-const r=passend[Math.floor(Math.random()*passend.length)];
-document.getElementById("rezept").innerHTML=`<p><b>${r.n}</b> – ca. ${r.k} kcal</p><b>Einkaufsliste:</b><ul>${r.z.map(z=>"<li>"+z+"</li>").join("")}</ul>`;}
-anzeigen();
+  const g=gramm();if(!g){alert("Bitte eine Menge eingeben");return}
+  const w=werte(sel.f,g),a=+anz.value;
+  const l=ein.value==="g"?`${r0(g)} g`:`${a===1?sel.f[6]:a+" × "+sel.f[6].replace(/^1 /,"")} (${r0(g)} g)`;
+  T().e.push({m:mz.value,n:sel.f[0],g,l,...w});save();
+  sel=null;letzteSuche="";addMz=null;zeig("heute");
+}
+function del(i){T().e.splice(i,1);save();zeig("heute")}
+function wasser(n){T().w=Math.max(0,T().w+n);save();zeig("heute")}
+function rezEss(i){
+  const r=REZ[i],s=sum(r.z.map(([n,g])=>werte(find(n),g))),g=r.z.reduce((a,x)=>a+x[1],0);
+  const m=prompt("Welche Mahlzeit? (Frühstück, Mittagessen, Abendessen, Snacks)",stdMz());if(m===null)return;
+  T(heute()).e.push({m:MZ.includes(m)?m:"Snacks",n:r.n,g,l:`1 Portion (${g} g)`,...s});save();D=heute();zeig("heute");
+}
+function rezKauf(i){REZ[i].z.forEach(([n,g])=>S.einkauf.push({n:`${n} (${g} g)`,ok:false}));save();alert("Zur Einkaufsliste hinzugefügt")}
+
+function zeig(t){
+  tab=t;
+  const titel={heute:fmtD(D),add:"Essen eintragen",rezepte:"Halal-Rezepte",einkauf:"Einkauf",mehr:"Verlauf & Ziele"};
+  document.getElementById("titel").textContent=titel[t];
+  document.getElementById("dnav").innerHTML=t==="heute"?`<button onclick="tag(-1)">‹</button><button onclick="tag(1)">›</button>`:"";
+  document.getElementById("v").innerHTML=V[t]();
+  document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("a",b.dataset.t===t));
+  if(t==="add"){const q=document.getElementById("q");if(letzteSuche)tippe();else q.focus()}
+  window.scrollTo(0,0);
+}
+function tag(n){const d=new Date(D+"T12:00");d.setDate(d.getDate()+n);const k=iso(d);if(k>heute())return;D=k;zeig("heute")}
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{if(b.dataset.t==="heute")D=heute();if(b.dataset.t==="add")addMz=null;zeig(b.dataset.t)});
+zeig("heute");
 </script>
 </body>
 </html>
