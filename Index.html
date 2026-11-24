@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>CalorinApp</title>
+<style>
+body{font-family:-apple-system,sans-serif;margin:0;background:#f4f6f8;color:#222}
+header{background:#2e7d32;color:#fff;padding:16px;text-align:center;font-size:22px;font-weight:bold}
+.card{background:#fff;margin:12px;padding:14px;border-radius:14px;box-shadow:0 1px 4px #0002}
+input,select,button{font-size:16px;padding:10px;margin:4px 0;width:100%;box-sizing:border-box;border-radius:8px;border:1px solid #ccc}
+button{background:#2e7d32;color:#fff;border:none}
+.bar{height:16px;background:#ddd;border-radius:8px;overflow:hidden}
+.fill{height:100%;background:#43a047}
+li{margin:6px 0}
+.del{background:#c62828;width:auto;padding:4px 10px;margin-left:8px}
+</style>
+</head>
+<body>
+<header>CalorinApp 🥗 Halal</header>
+
+<div class="card">
+<b>Mein Tagesziel (kcal)</b>
+<input id="ziel" type="number" placeholder="z. B. 2000">
+<button onclick="zielSpeichern()">Ziel speichern</button>
+<p id="stand"></p>
+<div class="bar"><div class="fill" id="fill" style="width:0%"></div></div>
+<p id="makros"></p>
+</div>
+
+<div class="card">
+<b>Essen eintragen</b>
+<input id="name" placeholder="Was hast du gegessen?">
+<input id="kcal" type="number" placeholder="Kalorien">
+<input id="eiweiss" type="number" placeholder="Eiweiß (g)">
+<input id="kh" type="number" placeholder="Kohlenhydrate (g)">
+<input id="fett" type="number" placeholder="Fett (g)">
+<button onclick="eintragen()">Hinzufügen</button>
+<ul id="liste"></ul>
+</div>
+
+<div class="card">
+<b>Halal-Rezeptvorschlag</b>
+<button onclick="vorschlag()">Gericht vorschlagen</button>
+<div id="rezept"></div>
+</div>
+
+<script>
+const rezepte=[
+{n:"Hähnchen mit Reis und Gemüse",k:550,z:["200 g Hähnchenbrust (halal)","80 g Reis","1 Paprika","1 Zucchini","1 EL Olivenöl"]},
+{n:"Linsensuppe",k:400,z:["120 g rote Linsen","1 Zwiebel","1 Karotte","Kreuzkümmel","1 l Gemüsebrühe"]},
+{n:"Rinderhack-Pfanne (halal)",k:600,z:["150 g Rinderhack (halal)","1 Zwiebel","200 g Kartoffeln","1 Tomate","Gewürze"]},
+{n:"Omelett mit Spinat",k:350,z:["3 Eier","100 g Spinat","30 g Feta","1 TL Butter"]},
+{n:"Lachs mit Süßkartoffel",k:520,z:["150 g Lachs","250 g Süßkartoffel","Brokkoli","Zitrone"]},
+{n:"Joghurt mit Obst und Haferflocken",k:300,z:["200 g Naturjoghurt","40 g Haferflocken","1 Banane","Honig"]}
+];
+const heute=new Date().toISOString().slice(0,10);
+let daten=JSON.parse(localStorage.getItem("calorin")||"{}");
+if(daten.tag!==heute){daten.tag=heute;daten.essen=[];}
+daten.ziel=daten.ziel||2000;
+function speichern(){localStorage.setItem("calorin",JSON.stringify(daten));anzeigen();}
+function zielSpeichern(){const z=+document.getElementById("ziel").value;if(z>0){daten.ziel=z;speichern();}}
+function eintragen(){
+const e={n:document.getElementById("name").value,k:+document.getElementById("kcal").value||0,
+e:+document.getElementById("eiweiss").value||0,c:+document.getElementById("kh").value||0,f:+document.getElementById("fett").value||0};
+if(!e.n)return;daten.essen.push(e);
+["name","kcal","eiweiss","kh","fett"].forEach(i=>document.getElementById(i).value="");speichern();}
+function loeschen(i){daten.essen.splice(i,1);speichern();}
+function anzeigen(){
+let k=0,e=0,c=0,f=0;
+document.getElementById("liste").innerHTML=daten.essen.map((x,i)=>{k+=x.k;e+=x.e;c+=x.c;f+=x.f;
+return `<li>${x.n}: ${x.k} kcal <button class="del" onclick="loeschen(${i})">X</button></li>`}).join("");
+const rest=daten.ziel-k;
+document.getElementById("stand").innerText=`${k} von ${daten.ziel} kcal – noch ${rest} kcal übrig`;
+document.getElementById("fill").style.width=Math.min(100,k/daten.ziel*100)+"%";
+document.getElementById("makros").innerText=`Eiweiß ${e} g · Kohlenhydrate ${c} g · Fett ${f} g`;
+document.getElementById("ziel").placeholder="Aktuell: "+daten.ziel;}
+function vorschlag(){
+let k=0;daten.essen.forEach(x=>k+=x.k);const rest=daten.ziel-k;
+let passend=rezepte.filter(r=>r.k<=rest);if(!passend.length)passend=rezepte;
+const r=passend[Math.floor(Math.random()*passend.length)];
+document.getElementById("rezept").innerHTML=`<p><b>${r.n}</b> – ca. ${r.k} kcal</p><b>Einkaufsliste:</b><ul>${r.z.map(z=>"<li>"+z+"</li>").join("")}</ul>`;}
+anzeigen();
+</script>
+</body>
+</html>
